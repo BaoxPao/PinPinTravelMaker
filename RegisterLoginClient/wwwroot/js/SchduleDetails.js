@@ -615,8 +615,6 @@ async function updateStartTime(scheduleId, scheduleDayId) {
         console.error('Error fetching schedule details:', error);
     }
 }
-
-
 $('#addPointWhichDayList').off('click').on('click', function () {
     var lat = $('#add-place-btn').attr('data-lat');
     var lng = $('#add-place-btn').attr('data-lng');
@@ -625,8 +623,6 @@ $('#addPointWhichDayList').off('click').on('click', function () {
     console.log(`#addPointWhichDayList clicke:${lat}/${lng}/${placeId}/${name}`)
     addscheduledate(lat, lng, placeId, name);
 });
-
-
 async function addscheduledate(lat, lng, placeId, name) {
     $('#AddPointWhichDayList').modal('show');
     var daylistSelected = $('#date-list option:selected');
@@ -706,7 +702,7 @@ async function addscheduledate(lat, lng, placeId, name) {
                     confirmButtonText: "確認再新增"
                 }).then(async (result) => {
                     if (result.isConfirmed) {
-                        let response2 = await fetch(`${baseAddress}/api/ScheduleDetails/override-schedule-detail`, {
+                        let response = await fetch(`${baseAddress}/api/ScheduleDetails/override-schedule-detail`, {
                             method: 'POST',
                             headers: {
                                 'Authorization': `Bearer ${token}`,
@@ -714,8 +710,25 @@ async function addscheduledate(lat, lng, placeId, name) {
                             },
                             body: JSON.stringify(body)
                         });
-
-                        if (response2.ok) {
+                        console.log('Response status:', response.status);  
+                        if (response.status === 200) {
+                            var dataresult = await response.json();
+                            let picture = await fetchPlacePhotoUrl(dataresult.location);
+                            var dataresults = {
+                                "Id": dataresult.id,
+                                "Sort": dataresult.sort,
+                                "ScheduleDayId": dataresult.scheduleDayId,
+                                "LocationName": dataresult.locationName,
+                                "placeId": dataresult.location,
+                                "StartTime": dataresult.startTime,
+                                "EndTime": dataresult.endTime,
+                                "lat": dataresult.lat,
+                                "lng": dataresult.lng,
+                                "TransportationCategoryId": dataresult.transportationCategoryId,
+                                "pictureUrl": picture
+                            };
+                            console.log('新增景點接回的結果', dataresult);
+                            console.log('add data result:', dataresults);
                             Swal.fire({
                                 title: "成功",
                                 text: `已新增 ${name} 到 ${day} 的行程中！`,
@@ -766,7 +779,6 @@ async function addscheduledate(lat, lng, placeId, name) {
         clearMarkers();
     }
 }
-
 //#endregion
 
 //#region 產生日期列表 generateDateList(scheduleDateIdInfo)
