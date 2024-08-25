@@ -550,7 +550,6 @@ $('#AddPointWhichDayList').on('shown.bs.modal', async function () {
     scheduleId = sessionStorage.getItem('scheduleId');
     await updateStartTime(scheduleId, scheduleDayId);
 });
-
 $('#date-list').on('change', async function () {
     scheduleId = sessionStorage.getItem('scheduleId');
     var daylistSelected = $('#date-list option:selected');
