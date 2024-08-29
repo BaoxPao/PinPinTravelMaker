@@ -127,31 +127,31 @@ namespace PinPinTest.Controllers
 
             try
             {
-                var member = await _context.Users
+                var memberid = await _context.Users
                 .Where(u => u.Email == inviteMemeberDTO.Email)
-                .Select(u => new { u.Id })
+                .Select(u => u.Id)
                 .FirstOrDefaultAsync();
 
-                if (member == null)
+                if (memberid == null || memberid == 0)
                 {
                     return BadRequest(new { message = "無此會員" });
                 }
 
                 bool isHoster = await _context.ScheduleGroups
-                    .AnyAsync(s => s.ScheduleId == inviteMemeberDTO.ScheduleId && s.UserId == member.Id && s.IsHoster == true);
+                    .AnyAsync(s => s.ScheduleId == inviteMemeberDTO.ScheduleId && memberid == s.UserId && s.IsHoster == true);
                 if (isHoster)
                 {
                     return BadRequest(new { message = "主辦者不需加入群組" });
                 }
 
                 bool isGroupMember = await _context.ScheduleGroups
-                    .AnyAsync(sg => sg.UserId == member.Id && sg.ScheduleId == inviteMemeberDTO.ScheduleId && sg.LeftDate == null);
+                    .AnyAsync(sg => sg.UserId == memberid && sg.ScheduleId == inviteMemeberDTO.ScheduleId && sg.LeftDate == null);
                 if (isGroupMember)
                 {
                     return BadRequest(new { message = "會員已加入此群組" });
                 }
 
-                var wasmember = await _context.ScheduleGroups.FirstOrDefaultAsync(s => s.ScheduleId == inviteMemeberDTO.ScheduleId && s.UserId == member.Id && s.LeftDate.HasValue);
+                var wasmember = await _context.ScheduleGroups.FirstOrDefaultAsync(s => s.ScheduleId == inviteMemeberDTO.ScheduleId && s.UserId == memberid && s.LeftDate.HasValue);
 
                 if (wasmember != null)
                 {
@@ -162,7 +162,7 @@ namespace PinPinTest.Controllers
                     var updateMemberAuthority = new ScheduleAuthority
                     {
                         ScheduleId = inviteMemeberDTO.ScheduleId,
-                        UserId = member.Id,
+                        UserId = memberid,
                         AuthorityCategoryId = inviteMemeberDTO.AuthorityCategoryId
                     };
                     _context.ScheduleAuthorities.Add(updateMemberAuthority);
@@ -175,7 +175,7 @@ namespace PinPinTest.Controllers
                     {
                         Id = 0,
                         ScheduleId = inviteMemeberDTO.ScheduleId,
-                        UserId = member.Id,
+                        UserId = memberid,
                         IsHoster = false,
                         JoinedDate = DateTime.Now,
                         LeftDate = null
@@ -185,7 +185,7 @@ namespace PinPinTest.Controllers
                     {
                         Id = 0,
                         ScheduleId = inviteMemeberDTO.ScheduleId,
-                        UserId = member.Id,
+                        UserId = memberid,
                         AuthorityCategoryId = inviteMemeberDTO.AuthorityCategoryId
                     };
                     _context.ScheduleAuthorities.Add(newmemberauthority);
@@ -223,7 +223,7 @@ namespace PinPinTest.Controllers
         {
             int jwtuserId = _getUserId.PinGetUserId(User).Value;
             int userId = exitDTO.UserID;
-            if(userId == 0)
+            if (userId == 0)
             {
                 userId = jwtuserId;
             }

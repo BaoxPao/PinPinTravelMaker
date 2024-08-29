@@ -25,7 +25,7 @@
         }));
     d[l] ? console.warn(p + " only loads once. Ignoring:", g) : d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n));
 })({
-    key: "AIzaSyCUl-h1ooBble_5ATQVVSjSJL0O2F6DHAo",
+    key: "AIzaSyD4bsGws_EYiPGkv0-HNlL2gmzzc_czVlQ",
     v: "weekly",
     libraries: "places,geometry,drawing,visualization"
 });
@@ -137,7 +137,6 @@ async function LoadScheduleInfo(scheduleId) {
                     }
                 }
 
-                // 对 data2 进行排序
                 data2.sort((a, b) => a.sort - b.sort);
             } else {
                 console.log('No schedule details found or scheduleDetails is missing.');
@@ -323,7 +322,7 @@ async function initMap(scheduleId, name, position, placeId) {
         infowindow.setContent(content);
         infowindow.open(map, marker);
 
-        document.querySelector('#add-place-btn').removeEventListener('click');
+        //document.querySelector('#add-place-btn').removeEventListener('click');
         document.querySelector('#add-place-btn').addEventListener('click', function () {
             const keyword = document.getElementById('search_input_field').value;
             performNearbySearch(place.geometry.location, keyword, place.name, scheduleId);
@@ -618,7 +617,7 @@ async function updateStartTime(scheduleId, scheduleDayId) {
 $('#addPointWhichDayList').off('click').on('click', function () {
     var lat = $('#add-place-btn').attr('data-lat');
     var lng = $('#add-place-btn').attr('data-lng');
-    var placeId = $('#add-place-btn').attr('data-placeId');
+    var placeId = $('#add-place-btn').attr('data-placeid');
     var name = $('#add-place-btn').attr('data-name');
     console.log(`#addPointWhichDayList clicke:${lat}/${lng}/${placeId}/${name}`)
     addscheduledate(lat, lng, placeId, name);
@@ -970,7 +969,7 @@ async function generateTabContents(data2, scheduleDateIdInfo) {
     }
 }
 async function getRouteInfo(origin, destination, categoryId) {
-    const primaryTravelMode = getTravelMode(categoryId);  // 根据 categoryId 获取首选的 travelMode
+    const primaryTravelMode = getTravelMode(categoryId);  
     const fallbackTravelModes = [
         google.maps.TravelMode.TRANSIT,
         google.maps.TravelMode.DRIVING,
@@ -1081,7 +1080,7 @@ function initMarkers(markersData) {
 
     if (markersData.length > 0) {
         map.setCenter({ lat: markersData[0].lat, lng: markersData[0].lng });
-        map.setZoom(15); // 根据需要调整缩放级别
+        map.setZoom(18); 
     }
 }
 function calculateAndDisplayRoute(locations) {
@@ -1393,10 +1392,9 @@ async function DeleteSchedule(id, scheduleDayId, scheduleId) {
                             tabContent.appendChild(noContentMessage);
                         }, 200);
 
-                        clearMarkers(); // 清除地图标记
+                        clearMarkers();
                     } else {
                         const remainingElements = Array.from(tabContent.querySelectorAll('.content-item'));
-                        updateMapMarkers(remainingElements); // 更新地图标记
                     }
 
                     refreshTabContentItemNumbers(scheduleDayId);
