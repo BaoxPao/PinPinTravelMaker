@@ -560,7 +560,7 @@ $('#date-list').on('change', async function () {
         
 async function updateStartTime(scheduleId, scheduleDayId) {
     try {
-        
+       
         const response = await fetch(`${baseAddress}/api/ScheduleDetails/${scheduleId}`, {
             method: 'GET',
             headers: {
@@ -754,15 +754,7 @@ async function addscheduledate(lat, lng, placeId, name) {
                 console.error('Error occurred:', error);
             }
         }
-        else {
-            Swal.fire({
-                title: "Oops!",
-                text: "新增失敗，請重新嘗試。",
-                icon: "error",
-                showConfirmButton: false,
-                timer: 1500
-            });
-        }
+     
     } catch (error) {
         console.error('Error occurred:', error);
         Swal.fire({
